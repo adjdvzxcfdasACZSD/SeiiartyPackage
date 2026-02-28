@@ -25,7 +25,7 @@ class CommonDialogs {
         fontSize: 18.0);
   }
 
-  loadingDialog(BuildContext context) {
+  Future<dynamic> loadingDialog(BuildContext context) {
     return showDialog(
       context: context,
       barrierDismissible: false,

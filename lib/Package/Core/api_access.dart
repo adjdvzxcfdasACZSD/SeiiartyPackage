@@ -91,10 +91,6 @@ class ApiAccess {
     }
   }
 
-  static Future<dynamic> login(BuildContext context, UserData userData, {bool? viewLoadingProcess}) async {
-    dynamic response = await connectApi(userData, "/Auth/Login", context: context, viewLoadingProcess: viewLoadingProcess);
-    return response;
-  }
 
   static Future<dynamic> delete(BuildContext context, UserData userData) async {
     dynamic response = await connectApi(userData, "/Auth/Delete", context: context);
@@ -109,26 +105,6 @@ class ApiAccess {
   static Future<dynamic> sendOTP(BuildContext context, UserToSendOTP userToSendOTP) async {
     dynamic response = await connectApi(userToSendOTP, "/Auth/SendOTP", context: context);
     return response;
-  }
-
-  static Future<dynamic> register(BuildContext context, String tokenToRegisterOrReset, UserData userData) async {
-    dynamic response = await connectApi(
-      userData,
-      "/Auth/Register",
-      context: context,
-      tokenToRegisterOrReset: tokenToRegisterOrReset,
-    );
-    return response[0];
-  }
-
-  static Future<dynamic> resetPassword(BuildContext context, String tokenToRegisterOrReset, UserData userData) async {
-    dynamic response = await connectApi(
-      userData,
-      "/Auth/ResetPassword",
-      context: context,
-      tokenToRegisterOrReset: tokenToRegisterOrReset,
-    );
-    return response[0];
   }
 
   static Future<dynamic> getPing(BuildContext context, int id, {bool? viewLoadingProcess}) async {

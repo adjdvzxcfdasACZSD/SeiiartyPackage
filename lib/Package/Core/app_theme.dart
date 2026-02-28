@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Snackbar Message Colors - Purple themed
+  // Snack bar Message Colors - Purple themed
   static const String colorReset = '\x1B[0m';
   static const String colorCyan = '\x1B[36m';
   static const String colorGreen = '\x1B[32m';
@@ -35,7 +35,7 @@ class AppTheme {
   // Gradient Colors - Enhanced Purple Gradients
   static const Color gradientStart = Color(0xFF7C3AED);         // Primary purple
   static const Color gradientMid = Color(0xFF9C6FFF);           // Mid transition
-  static const Color gradientEnd = Color(0xFFC4B5FD);           // Light purple end
+  static const Color gradientEnd = Color(0xFF9C6FFF);           // Light purple end
 
   // Alternative Gradients
   static const Color darkGradientStart = Color(0xFF5B21B6);

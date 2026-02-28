@@ -16,6 +16,7 @@ class GeneralConstant {
   static dynamic userLogged;
   static String firebaseToken = "";
   static dynamic setupTable;
+  static dynamic items;
   static String unknownError = "Unknown error";
   static String noInternetConnectionError = "No internet connection";
   static String privacyPolicyUrl = "";

@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPreference{
   static String userLoggedKey = "userLogged";
   static String firebaseTokenKey = "firebaseToken";
-
+  static String items = "items";
+  static String catTypes = "CatTypes";
+  static String categories = "Categories";
 
   static Future<void> sharedPreferencesSetListDynamic(String key, List<dynamic> value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

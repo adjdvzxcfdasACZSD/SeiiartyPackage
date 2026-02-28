@@ -1,14 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:seiiarty_package/Package/Screen/DrawerScreen/AdministratorTools/sc_administrator_tools.dart';
 import '../../../Package/Core/common_Dialogs.dart';
 import '../../../Package/Core/app_theme.dart';
 import '../Core/general_const.dart';
 import '../Core/general_function.dart';
 import '../Core/shared_preference.dart';
+import '../Screen/DrawerScreen/Profile/sc_edit_profile.dart';
 import '../Screen/DrawerScreen/Profile/sc_profile.dart';
 
 class MyDrawer extends StatefulWidget {
-  const MyDrawer({super.key});
+  final VoidCallback afterTap;
+
+  const MyDrawer({super.key, required this.afterTap});
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
@@ -80,12 +84,13 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                       _buildMenuItem(
                         icon: Icons.person_outline_rounded,
                         title: "الملف الشخصي",
-                        onTap: () {
+                        onTap: () async {
                           Navigator.pop(context);
                           Navigator.push(
                             context,
                             PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => ProfileScreen()),
                           );
+                          widget.afterTap;
                         },
 
                         size: size,
@@ -99,66 +104,72 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                       ),
                       _buildMenuItem(
                         icon: Icons.lock_outline_rounded,
-                        title: "الخصوصية",
-                        onTap: () => Navigator.pop(context),
+                        title: "Administrator Tools",
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => AdminToolsScreen()),
+                          );
+                        },
                         size: size,
                       ),
 
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
-                        child: Text(
-                          'الدعم',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.grey.withOpacity(0.7),
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                      _buildMenuItem(
-                        icon: Icons.help_outline_rounded,
-                        title: "المساعدة",
-                        onTap: () => Navigator.pop(context),
-                        size: size,
-                      ),
-
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                        child: Divider(color: AppTheme.darkBorderColor.withOpacity(0.5), thickness: 1),
-                      ),
-
-                      _buildMenuItem(
-                        icon: Icons.logout_rounded,
-                        title: "تسجيل الخروج",
-                        onTap: () => CommonDialogs().showDialogYesNo(
-                          context,
-                          btnColor: AppTheme.dangerColor,
-                          title: 'تسجيل الخروج',
-                          btnText: 'تسجيل الخروج',
-                          content: 'هل أنت متأكد من تسجيل الخروج؟',
-                          onYes: () {
-                            Navigator.pop(context);
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => GeneralConstant.loginScreen!,
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  return FadeTransition(opacity: animation, child: child);
-                                },
-                                transitionDuration: Duration(milliseconds: 500),
-                              ),
-                              (route) => false,
-                            );
-                            GeneralConstant.userLogged = null;
-                            SharedPreference.sharedPreferencesSetDynamic(SharedPreference.userLoggedKey, null);
-                          },
-                          icon: Icon(Icons.logout_rounded, color: AppTheme.dangerColor),
-                        ),
-                        size: size,
-                        isDestructive: true,
-                      ),
-                      SizedBox(height: 16),
+                      // Padding(
+                      //   padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
+                      //   child: Text(
+                      //     'الدعم',
+                      //     style: TextStyle(
+                      //       fontSize: 12,
+                      //       fontWeight: FontWeight.w600,
+                      //       color: AppTheme.grey.withOpacity(0.7),
+                      //       letterSpacing: 0.5,
+                      //     ),
+                      //   ),
+                      // ),
+                      // _buildMenuItem(
+                      //   icon: Icons.help_outline_rounded,
+                      //   title: "المساعدة",
+                      //   onTap: () => Navigator.pop(context),
+                      //   size: size,
+                      // ),
+                      //
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      //   child: Divider(color: AppTheme.darkBorderColor.withOpacity(0.5), thickness: 1),
+                      // ),
+                      //
+                      // _buildMenuItem(
+                      //   icon: Icons.logout_rounded,
+                      //   title: "تسجيل الخروج",
+                      //   onTap: () => CommonDialogs().showDialogYesNo(
+                      //     context,
+                      //     btnColor: AppTheme.dangerColor,
+                      //     title: 'تسجيل الخروج',
+                      //     btnText: 'تسجيل الخروج',
+                      //     content: 'هل أنت متأكد من تسجيل الخروج؟',
+                      //     onYes: () {
+                      //       Navigator.pop(context);
+                      //       Navigator.pushAndRemoveUntil(
+                      //         context,
+                      //         PageRouteBuilder(
+                      //           pageBuilder: (context, animation, secondaryAnimation) => GeneralConstant.loginScreen!,
+                      //           transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      //             return FadeTransition(opacity: animation, child: child);
+                      //           },
+                      //           transitionDuration: Duration(milliseconds: 500),
+                      //         ),
+                      //         (route) => false,
+                      //       );
+                      //       GeneralConstant.userLogged = null;
+                      //       SharedPreference.sharedPreferencesSetDynamic(SharedPreference.userLoggedKey, null);
+                      //     },
+                      //     icon: Icon(Icons.logout_rounded, color: AppTheme.dangerColor),
+                      //   ),
+                      //   size: size,
+                      //   isDestructive: true,
+                      // ),
+                      // SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -273,7 +284,12 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          // Navigate to edit profile
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => EditProfileScreen()),
+                          );
+
                         },
                         borderRadius: BorderRadius.circular(size.width * 0.032),
                         child: Container(

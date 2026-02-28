@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:seiiarty_package/Package/Core/app_theme.dart';
 import 'package:seiiarty_package/Package/Core/general_const.dart';
 import 'package:seiiarty_package/Package/Core/general_function.dart';
+import 'package:seiiarty_package/Package/Screen/DrawerScreen/Profile/sc_about_app.dart';
 import 'package:seiiarty_package/Package/Screen/DrawerScreen/Profile/sc_edit_profile.dart';
 import 'package:seiiarty_package/Package/Widget/my_appbar.dart';
-import 'package:seiiarty_package/Package/Widget/my_drawer.dart';
+
+import '../../../Core/common_Dialogs.dart';
+import '../../../Core/shared_preference.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    GeneralFunctions.loadUserData("Profile Screen");
+    // GeneralFunctions.loadUserData("Profile Screen");
     if (kDebugMode) {
       print(GeneralConstant.userLogged);
     }
@@ -56,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           scaffoldKey: _scaffoldKey,
           showBackButton: true,
         ),
-        drawer: MyDrawer(),
+
         body: FadeTransition(
           opacity: _fadeAnimation,
           child: SafeArea(
@@ -283,7 +286,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           size: size,
           onTap: () {
             if (kDebugMode) {
-              print("حول التطبيق");
+              Navigator.push(
+                context,
+                PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => AboutAppScreen()),
+              );
             }
           },
         ),
@@ -293,11 +299,32 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           title: "تسجيل الخروج",
           color: Colors.red,
           size: size,
-          onTap: () {
-            if (kDebugMode) {
-              print("تسجيل الخروج");
-            }
-          },
+          onTap: () =>
+            CommonDialogs().showDialogYesNo(
+                context,
+                btnColor: AppTheme.dangerColor,
+                title: 'تسجيل الخروج',
+                btnText: 'تسجيل الخروج',
+                content: 'هل أنت متأكد من تسجيل الخروج؟',
+                onYes: () {
+                  Navigator.pop(context);
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => GeneralConstant.loginScreen!,
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
+                      transitionDuration: Duration(milliseconds: 500),
+                    ),
+                        (route) => false,
+                  );
+                  GeneralConstant.userLogged = null;
+                  SharedPreference.sharedPreferencesSetDynamic(SharedPreference.userLoggedKey, null);
+                },
+                icon: Icon(Icons.logout, color: AppTheme.dangerColor),
+              ),
+
         ),
       ],
     );
