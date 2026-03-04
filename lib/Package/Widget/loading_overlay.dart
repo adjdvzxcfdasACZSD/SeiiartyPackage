@@ -1,6 +1,6 @@
 // loading_overlay.dart
 import 'package:flutter/material.dart';
-import '../Core/app_theme.dart';
+import 'package:seiiarty_package/Package/Core/app_theme.dart';
 
 class LoadingOverlay {
   static OverlayEntry? _overlayEntry;

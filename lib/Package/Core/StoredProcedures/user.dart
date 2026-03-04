@@ -1,68 +1,83 @@
 
-import '../../../Package/Core/api_access.dart';
-import '../../../Package/Core/shared_preference.dart';
+import '../api_access.dart';
 import '../general_const.dart';
 import '../general_function.dart';
 import '../insert_classes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 import '../phone_number_formatter.dart';
+import '../shared_preference.dart';
 
 class SpUser {
+  // ── GET ─────────────────────────────────────────────────
   static Future<dynamic> get({
     BuildContext? context,
-    int? id,
-    String? phoneNo,
-    bool viewLoadingProcess = true,
-    bool withDeletionDate = false,
+    int?          id,
+    String?       phoneNo,
+    int?          excludeStoreId,   // ← NEW: exclude users already in this store
+    bool          viewLoadingProcess = true,
+    bool          withDeletionDate   = false,
   }) async {
-    String cmd = "";
-    dynamic result;
+    String    cmd;
+    dynamic   result;
 
-    // Get single user by ID
+    // ── Get single user by ID ──────────────────────────────
     if (id != null) {
-      cmd = "SELECT * FROM [User] WHERE Id = $id And DeletionDate IS NULL";
-
-      if (withDeletionDate) {
-        cmd = "SELECT * FROM [User] WHERE Id = $id";
-      }
+      cmd = withDeletionDate
+          ? "SELECT * FROM [User] WHERE ID = $id"
+          : "SELECT * FROM [User] WHERE ID = $id AND DeletionDate IS NULL";
 
       result = await ApiAccess.execCmd(RequestCmd(cmd), context: context);
-      if (result == null) {
-        return "User not found";
-      }
+      if (result == null) return "User not found";
       return result[0];
     }
-    // Get user by phone and password (login)
+
+    // ── Get user by phone ──────────────────────────────────
     else if (phoneNo != null) {
-      cmd =
-          "SELECT * FROM [User] WHERE PhoneNumber = '${PhoneNumberFormatter.formatLibyanPhone(phoneNo)}' And DeletionDate IS NULL";
-      if (withDeletionDate) {
-        cmd = "SELECT * FROM [User] WHERE PhoneNumber = '${PhoneNumberFormatter.formatLibyanPhone(phoneNo)}'";
-      }
-      result = await ApiAccess.execCmd(RequestCmd(cmd), context: context, viewLoadingProcess: false);
-      if (result == null) {
-        if (kDebugMode) {
-          print("Phone number or password not correct");
-        }
-        return null;
-      } else if (result.length == 1) {
-        return result[0];
-      } else {
-        return null;
-      }
+      final formatted = PhoneNumberFormatter.formatLibyanPhone(phoneNo);
+      cmd = withDeletionDate
+          ? "SELECT * FROM [User] WHERE PhoneNumber = '$formatted'"
+          : "SELECT * FROM [User] WHERE PhoneNumber = '$formatted' AND DeletionDate IS NULL";
+
+      result = await ApiAccess.execCmd(
+        RequestCmd(cmd),
+        context:            context,
+        viewLoadingProcess: false,
+      );
+      if (result == null) return null;
+      return result.length == 1 ? result[0] : null;
     }
-    // Get all users
+
+    // ── Get ALL users ──────────────────────────────────────
     else {
-      cmd = "SELECT * FROM [User] where DeletionDate IS NULL";
-      if (withDeletionDate) {
-        cmd = "SELECT * FROM [User]";
+      final List<String> conditions = [];
+
+      if (!withDeletionDate) conditions.add("[User].DeletionDate IS NULL");
+
+      // exclude users who are already active managers of the given store
+      if (excludeStoreId != null) {
+        conditions.add(
+          "[User].ID NOT IN ("
+              "  SELECT UserId FROM StoreUser"
+              "  WHERE StoreId = $excludeStoreId"
+              "  AND DeletionDate IS NULL"
+              ")",
+        );
       }
-      result = await ApiAccess.execCmd(RequestCmd(cmd), context: context);
-      if (result == null) {
-        return "No users found";
-      }
+
+      final String where = conditions.isEmpty
+          ? ""
+          : "WHERE ${conditions.join(' AND ')}";
+
+      cmd = "SELECT * FROM [User] $where";
+
+      result = await ApiAccess.execCmd(
+        RequestCmd(cmd),
+        context:            context,
+        viewLoadingProcess: viewLoadingProcess,
+      );
+
+      if (result == null) return "No users found";
       return result;
     }
   }
